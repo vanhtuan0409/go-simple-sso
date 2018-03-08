@@ -28,7 +28,7 @@ func (t *tpl) Render(w io.Writer, name string, data interface{}, c echo.Context)
 
 func redirectMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		if cookie, err := c.Cookie("name"); err == nil {
+		if cookie, err := c.Cookie("name"); err == nil && cookie.Value != "" {
 			callback := c.Request().URL.Query().Get("callback")
 			if callback == "" {
 				callback = "http://web1.com:8081"
@@ -60,5 +60,6 @@ func main() {
 	// Routing
 	e.GET("/", h.LoginView, redirectMiddleware)
 	e.POST("/", h.LoginProcess, redirectMiddleware)
+	e.GET("/logout", h.Logout)
 	e.Start(":5000")
 }

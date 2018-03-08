@@ -60,6 +60,15 @@ func (h *handler) LoginProcess(c echo.Context) error {
 	return c.Redirect(http.StatusFound, tokenAddedCallback)
 }
 
+func (h *handler) Logout(c echo.Context) error {
+	cookie := &http.Cookie{
+		Name:  "name",
+		Value: "",
+	}
+	c.SetCookie(cookie)
+	return c.Redirect(http.StatusFound, "/")
+}
+
 func renderLoginProcessError(c echo.Context, err string) error {
 	data := loginViewModel{}
 	data.Error = err

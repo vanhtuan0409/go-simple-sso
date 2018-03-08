@@ -31,8 +31,9 @@ func (t *tpl) Render(w io.Writer, name string, data interface{}, c echo.Context)
 
 func authMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		if _, err := c.Cookie("name"); err != nil {
-			loginURL := SSO_ADDRESS + "?callback=" + SERVER_ADDRESS
+		if cookie, err := c.Cookie("name"); err != nil || cookie.Value == "" {
+			callbackURL := SERVER_ADDRESS + "/callback"
+			loginURL := SSO_ADDRESS + "?callback=" + callbackURL
 			return c.Redirect(http.StatusFound, loginURL)
 		}
 
@@ -50,5 +51,7 @@ func main() {
 
 	// Routing
 	e.GET("/", handler.Home, authMiddleware)
+	e.GET("/callback", handler.Callback)
+	e.GET("/logout", handler.Logout)
 	e.Start(":8081")
 }
