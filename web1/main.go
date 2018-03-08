@@ -7,6 +7,7 @@ import (
 	"net/url"
 
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 	"github.com/vanhtuan0409/go-simple-sso/web1/handler"
 )
 
@@ -43,6 +44,7 @@ func authMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 func main() {
 	e := echo.New()
+	e.Use(middleware.Logger())
 
 	// Set golang template
 	t := newTpl("template/*.html")

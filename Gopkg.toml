@@ -32,3 +32,7 @@
 [[constraint]]
   name = "github.com/labstack/echo"
   version = "3.2.6"
+
+[[constraint]]
+  name = "github.com/dgrijalva/jwt-go"
+  version = "3.1.0"
