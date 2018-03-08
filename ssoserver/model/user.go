@@ -1,18 +1,20 @@
 package model
 
 import (
+	"github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
-	ID             int
-	Email          string
-	HashedPassword string
-	Name           string
+	ID             string `json:"id"`
+	Email          string `json:"email"`
+	HashedPassword string `json:"-"`
+	Name           string `json:"name"`
 }
 
 func NewUser(email, password, name string) *User {
 	u := &User{
+		ID:    uuid.NewV4().String(),
 		Email: email,
 		Name:  name,
 	}

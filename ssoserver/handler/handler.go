@@ -5,6 +5,7 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/vanhtuan0409/go-simple-sso/ssoserver/datastore"
+	"github.com/vanhtuan0409/go-simple-sso/ssoserver/model"
 )
 
 type handler struct {
@@ -46,6 +47,8 @@ func (h *handler) LoginProcess(c echo.Context) error {
 		return renderLoginProcessError(c, "Email or Password is incorrect")
 	}
 
+	session := model.NewSession(user.ID)
+
 	callback := c.Request().URL.Query().Get("callback")
 	if callback == "" {
 		callback = "http://web1.com:8081"
@@ -53,24 +56,56 @@ func (h *handler) LoginProcess(c echo.Context) error {
 	tokenAddedCallback := callback + "?name=" + user.Name
 
 	cookie := &http.Cookie{
-		Name:  "name",
-		Value: user.Name,
+		Name:  "session_id",
+		Value: session.ID,
 	}
 	c.SetCookie(cookie)
 	return c.Redirect(http.StatusFound, tokenAddedCallback)
 }
 
 func (h *handler) Logout(c echo.Context) error {
-	cookie := &http.Cookie{
-		Name:  "name",
-		Value: "",
-	}
+	cookie, _ := c.Cookie("session_id")
+	h.ds.DeleteSession(cookie.Value)
+	cookie.Value = ""
 	c.SetCookie(cookie)
 	return c.Redirect(http.StatusFound, "/")
+}
+
+type verifyRequest struct {
+	Token string `json:"token"`
+}
+
+func (h *handler) VerifyToken(c echo.Context) error {
+	request := new(verifyRequest)
+	if err := c.Bind(request); err != nil {
+		return renderVerifyTokenError(c, err)
+	}
+
+	session, err := h.ds.GetSessionByToken(request.Token)
+	if err != nil {
+		return renderVerifyTokenError(c, err)
+	}
+
+	user, err := h.ds.GetUser(session.UserID)
+	if err != nil {
+		return renderVerifyTokenError(c, err)
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"success": true,
+		"user":    user,
+	})
 }
 
 func renderLoginProcessError(c echo.Context, err string) error {
 	data := loginViewModel{}
 	data.Error = err
 	return c.Render(http.StatusOK, "login.html", data)
+}
+
+func renderVerifyTokenError(c echo.Context, err error) error {
+	return c.JSON(http.StatusBadRequest, map[string]interface{}{
+		"success": false,
+		"message": err.Error(),
+	})
 }

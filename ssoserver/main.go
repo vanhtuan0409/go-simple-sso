@@ -3,12 +3,12 @@ package main
 import (
 	"html/template"
 	"io"
-	"net/http"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/vanhtuan0409/go-simple-sso/ssoserver/datastore"
 	"github.com/vanhtuan0409/go-simple-sso/ssoserver/handler"
+	mdw "github.com/vanhtuan0409/go-simple-sso/ssoserver/middleware"
 	"github.com/vanhtuan0409/go-simple-sso/ssoserver/model"
 )
 
@@ -26,21 +26,6 @@ func (t *tpl) Render(w io.Writer, name string, data interface{}, c echo.Context)
 	return t.templates.ExecuteTemplate(w, name, data)
 }
 
-func redirectMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		if cookie, err := c.Cookie("name"); err == nil && cookie.Value != "" {
-			callback := c.Request().URL.Query().Get("callback")
-			if callback == "" {
-				callback = "http://web1.com:8081"
-			}
-			tokenAddedCallback := callback + "?name=" + cookie.Value
-			return c.Redirect(http.StatusFound, tokenAddedCallback)
-		}
-
-		return next(c)
-	}
-}
-
 func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
@@ -56,10 +41,11 @@ func main() {
 
 	// Create handler
 	h := handler.NewHandler(ds)
+	redirectMdw := mdw.RedirectMiddleware(ds)
 
 	// Routing
-	e.GET("/", h.LoginView, redirectMiddleware)
-	e.POST("/", h.LoginProcess, redirectMiddleware)
+	e.GET("/", h.LoginView, redirectMdw)
+	e.POST("/", h.LoginProcess, redirectMdw)
 	e.GET("/logout", h.Logout)
 	e.Start(":5000")
 }
