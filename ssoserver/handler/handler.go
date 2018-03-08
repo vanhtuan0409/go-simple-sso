@@ -47,7 +47,16 @@ func (h *handler) LoginProcess(c echo.Context) error {
 	}
 
 	callback := c.Request().URL.Query().Get("callback")
-	return c.String(http.StatusOK, callback)
+	if callback == "" {
+		callback = "http://localhost:8081"
+	}
+
+	cookie := &http.Cookie{
+		Name:  "name",
+		Value: user.Name,
+	}
+	c.SetCookie(cookie)
+	return c.Redirect(http.StatusFound, callback)
 }
 
 func renderLoginProcessError(c echo.Context, err string) error {

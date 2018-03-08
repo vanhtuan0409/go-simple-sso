@@ -28,10 +28,10 @@ func authMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		if _, err := c.Cookie("name"); err != nil {
 			loginURL := "http://localhost:5000?callback=http://localhost:8081"
-			return c.Redirect(http.StatusTemporaryRedirect, loginURL)
+			return c.Redirect(http.StatusFound, loginURL)
 		}
 
-		return nil
+		return next(c)
 	}
 }
 
