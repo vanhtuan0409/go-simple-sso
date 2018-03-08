@@ -18,11 +18,7 @@ type homeViewModel struct {
 }
 
 func (h *handler) Home(c echo.Context) error {
-	name, err := c.Cookie("name")
-	if err != nil {
-		return err
-	}
-
+	name, _ := c.Cookie("name")
 	data := homeViewModel{
 		Name: name.Value,
 	}
