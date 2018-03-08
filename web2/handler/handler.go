@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo"
+	"github.com/vanhtuan0409/go-simple-sso/web2/model"
 )
 
 const (
@@ -11,37 +12,34 @@ const (
 )
 
 type homeViewModel struct {
-	Name string
+	User       *model.User
+	LogoutLink string
 }
 
 func Home(c echo.Context) error {
-	name, _ := c.Cookie("name")
-	data := homeViewModel{
-		Name: name.Value,
+	data := c.Get("user")
+	user, ok := data.(*model.User)
+	if !ok {
+		return c.String(http.StatusInternalServerError, "Some error happen")
 	}
-	return c.Render(http.StatusOK, "home.html", data)
+
+	viewData := homeViewModel{
+		User:       user,
+		LogoutLink: SSO_ADDRESS + "/logout",
+	}
+	return c.Render(http.StatusOK, "home.html", viewData)
 }
 
 func Callback(c echo.Context) error {
-	name := c.Request().URL.Query().Get("name")
-	if name == "" {
-		return c.String(http.StatusBadRequest, "Name is required")
+	token := c.Request().URL.Query().Get("token")
+	if token == "" {
+		return c.String(http.StatusBadRequest, "Token is required")
 	}
 
 	cookie := &http.Cookie{
-		Name:  "name",
-		Value: name,
+		Name:  "token",
+		Value: token,
 	}
 	c.SetCookie(cookie)
 	return c.Redirect(http.StatusFound, "/")
-}
-
-func Logout(c echo.Context) error {
-	cookie := &http.Cookie{
-		Name:  "name",
-		Value: "",
-	}
-	c.SetCookie(cookie)
-	redirectURL := SSO_ADDRESS + "/logout"
-	return c.Redirect(http.StatusFound, redirectURL)
 }
