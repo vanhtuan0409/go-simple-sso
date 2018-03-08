@@ -4,13 +4,17 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo"
+	"github.com/vanhtuan0409/go-simple-sso/ssoserver/datastore"
 )
 
 type handler struct {
+	ds datastore.Datastore
 }
 
-func NewHandler() *handler {
-	return &handler{}
+func NewHandler(ds datastore.Datastore) *handler {
+	return &handler{
+		ds: ds,
+	}
 }
 
 type loginViewModel struct {
