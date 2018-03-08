@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"html/template"
 	"io"
 	"net/http"
@@ -41,6 +42,7 @@ func redirectToLogin(c echo.Context) error {
 type verifyResponse struct {
 	Success bool        `json:"success"`
 	User    *model.User `json:"user"`
+	Message string      `json:"message"`
 }
 
 func verifyToken(token string) (*model.User, error) {
@@ -69,6 +71,9 @@ func verifyToken(token string) (*model.User, error) {
 	jsonObj := new(verifyResponse)
 	if err := json.NewDecoder(resp.Body).Decode(jsonObj); err != nil {
 		return nil, err
+	}
+	if !jsonObj.Success {
+		return nil, errors.New(jsonObj.Message)
 	}
 
 	return jsonObj.User, nil
