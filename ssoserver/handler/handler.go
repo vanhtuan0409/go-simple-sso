@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo"
@@ -48,12 +49,15 @@ func (h *handler) LoginProcess(c echo.Context) error {
 	}
 
 	session := model.NewSession(user.ID)
+	if err := h.ds.SaveSession(session); err != nil {
+		return renderLoginProcessError(c, "Internal error happened")
+	}
 
 	callback := c.Request().URL.Query().Get("callback")
 	if callback == "" {
 		callback = "http://web1.com:8081"
 	}
-	tokenAddedCallback := callback + "?name=" + user.Name
+	tokenAddedCallback := callback + "?token=" + session.Token
 
 	cookie := &http.Cookie{
 		Name:  "session_id",
@@ -78,18 +82,25 @@ type verifyRequest struct {
 func (h *handler) VerifyToken(c echo.Context) error {
 	request := new(verifyRequest)
 	if err := c.Bind(request); err != nil {
+		c.Logger().Debugf("Error when parsing request: %v", err)
 		return renderVerifyTokenError(c, err)
 	}
 
 	session, err := h.ds.GetSessionByToken(request.Token)
 	if err != nil {
+		c.Logger().Debugf("Error when getting session: %v", err)
 		return renderVerifyTokenError(c, err)
 	}
 
 	user, err := h.ds.GetUser(session.UserID)
 	if err != nil {
+		c.Logger().Debugf("Error when getting user: %v", err)
 		return renderVerifyTokenError(c, err)
 	}
+
+	fmt.Println("===========")
+	fmt.Println("return user: ", user)
+	fmt.Println("===========")
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"success": true,

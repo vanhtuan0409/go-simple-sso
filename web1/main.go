@@ -1,6 +1,9 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"html/template"
 	"io"
 	"net/http"
@@ -8,6 +11,7 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/vanhtuan0409/go-simple-sso/web1/handler"
+	"github.com/vanhtuan0409/go-simple-sso/web1/model"
 )
 
 const (
@@ -29,14 +33,65 @@ func (t *tpl) Render(w io.Writer, name string, data interface{}, c echo.Context)
 	return t.templates.ExecuteTemplate(w, name, data)
 }
 
+func redirectToLogin(c echo.Context) error {
+	callbackURL := SERVER_ADDRESS + "/callback"
+	loginURL := SSO_ADDRESS + "?callback=" + callbackURL
+	return c.Redirect(http.StatusFound, loginURL)
+}
+
+type verifyResponse struct {
+	Success bool        `json:"success"`
+	User    *model.User `json:"user"`
+}
+
+func verifyToken(token string) (*model.User, error) {
+	verifyURL := SSO_ADDRESS + "/verify_token"
+
+	data, err := json.Marshal(map[string]string{
+		"token": token,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", verifyURL, bytes.NewBuffer(data))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	user := new(model.User)
+	if err := json.NewDecoder(resp.Body).Decode(user); err != nil {
+		return nil, err
+	}
+
+	fmt.Println(user)
+
+	return user, nil
+}
+
 func authMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		if cookie, err := c.Cookie("name"); err != nil || cookie.Value == "" {
-			callbackURL := SERVER_ADDRESS + "/callback"
-			loginURL := SSO_ADDRESS + "?callback=" + callbackURL
-			return c.Redirect(http.StatusFound, loginURL)
+		cookie, err := c.Cookie("token")
+		if err != nil || cookie.Value == "" {
+			return redirectToLogin(c)
 		}
 
+		user, err := verifyToken(cookie.Value)
+		if err != nil {
+			cookie.Value = ""
+			c.SetCookie(cookie)
+			return redirectToLogin(c)
+		}
+
+		c.Set("user", user)
 		return next(c)
 	}
 }
@@ -52,6 +107,5 @@ func main() {
 	// Routing
 	e.GET("/", handler.Home, authMiddleware)
 	e.GET("/callback", handler.Callback)
-	e.GET("/logout", handler.Logout)
 	e.Start(":8081")
 }

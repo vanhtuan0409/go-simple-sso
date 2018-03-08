@@ -26,7 +26,8 @@ type inmemDatastore struct {
 
 func NewDatastore() Datastore {
 	return &inmemDatastore{
-		users: make(map[string]*model.User),
+		users:    make(map[string]*model.User),
+		sessions: make(map[string]*model.Session),
 	}
 }
 
@@ -81,6 +82,7 @@ func (i *inmemDatastore) SaveSession(session *model.Session) error {
 	if session.ID == "" {
 		session.ID = uuid.NewV4().String()
 	}
+
 	i.sessions[session.ID] = session
 	return nil
 }

@@ -47,5 +47,6 @@ func main() {
 	e.GET("/", h.LoginView, redirectMdw)
 	e.POST("/", h.LoginProcess, redirectMdw)
 	e.GET("/logout", h.Logout)
+	e.POST("/verify_token", h.VerifyToken)
 	e.Start(":5000")
 }

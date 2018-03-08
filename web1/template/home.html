@@ -9,8 +9,11 @@
 </head>
 
 <body>
-    <h1>Welcome to Web1. Hello {{.Name}}</h1>
-    <a href="/logout">Logout</a>
+    <h1>Welcome to Web1</h1>
+    <p>User id: {{.User.ID}}</p>
+    <p>User email: {{.User.Email}}</p>
+    <p>User name: {{.User.Name}}</p>
+    <a href="{{.LogoutLink}}">Logout</a>
 </body>
 
 </html>
