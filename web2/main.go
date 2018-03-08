@@ -16,7 +16,7 @@ import (
 
 const (
 	SSO_ADDRESS    = "http://login.com:5000"
-	SERVER_ADDRESS = "http://web2.com:8081"
+	SERVER_ADDRESS = "http://web2.com:8082"
 )
 
 type tpl struct {
@@ -109,5 +109,5 @@ func main() {
 	// Routing
 	e.GET("/", handler.Home, authMiddleware)
 	e.GET("/callback", handler.Callback)
-	e.Start(":8081")
+	e.Start(":8082")
 }
