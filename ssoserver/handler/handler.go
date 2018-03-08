@@ -48,15 +48,16 @@ func (h *handler) LoginProcess(c echo.Context) error {
 
 	callback := c.Request().URL.Query().Get("callback")
 	if callback == "" {
-		callback = "http://localhost:8081"
+		callback = "http://web1.com:8081"
 	}
+	tokenAddedCallback := callback + "?name=" + user.Name
 
 	cookie := &http.Cookie{
 		Name:  "name",
 		Value: user.Name,
 	}
 	c.SetCookie(cookie)
-	return c.Redirect(http.StatusFound, callback)
+	return c.Redirect(http.StatusFound, tokenAddedCallback)
 }
 
 func renderLoginProcessError(c echo.Context, err string) error {

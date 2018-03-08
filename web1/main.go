@@ -10,6 +10,11 @@ import (
 	"github.com/vanhtuan0409/go-simple-sso/web1/handler"
 )
 
+const (
+	SSO_ADDRESS    = "http://login.com:5000"
+	SERVER_ADDRESS = "http://web1.com:8081"
+)
+
 type tpl struct {
 	templates *template.Template
 }
@@ -27,7 +32,7 @@ func (t *tpl) Render(w io.Writer, name string, data interface{}, c echo.Context)
 func authMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		if _, err := c.Cookie("name"); err != nil {
-			loginURL := "http://localhost:5000?callback=http://localhost:8081"
+			loginURL := SSO_ADDRESS + "?callback=" + SERVER_ADDRESS
 			return c.Redirect(http.StatusFound, loginURL)
 		}
 
