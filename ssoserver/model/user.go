@@ -1,6 +1,8 @@
 package model
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"golang.org/x/crypto/bcrypt"
+)
 
 type User struct {
 	ID             int
@@ -19,11 +21,13 @@ func NewUser(email, password, name string) *User {
 }
 
 func (u *User) SetPassword(password string) {
-	u.HashedPassword = hashPassword(password)
+	bytes, _ := bcrypt.GenerateFromPassword([]byte(password), 14)
+	u.HashedPassword = string(bytes)
 }
 
 func (u *User) CheckPassword(password string) bool {
-	return u.HashedPassword == hashPassword(password)
+	err := bcrypt.CompareHashAndPassword([]byte(u.HashedPassword), []byte(password))
+	return err == nil
 }
 
 func hashPassword(password string) string {

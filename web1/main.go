@@ -4,7 +4,6 @@ import (
 	"html/template"
 	"io"
 	"net/http"
-	"net/url"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -28,14 +27,8 @@ func (t *tpl) Render(w io.Writer, name string, data interface{}, c echo.Context)
 func authMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		if _, err := c.Cookie("name"); err != nil {
-			u, _ := url.Parse("http://localhost:5000")
-			query := url.Values{}
-			requestURL := c.Request().URL
-			requestURL.Host = "http://localhost:8081"
-			query.Set("callback", requestURL.String())
-			u.RawQuery = query.Encode()
-
-			return c.Redirect(http.StatusTemporaryRedirect, u.String())
+			loginURL := "http://localhost:5000?callback=http://localhost:8081"
+			return c.Redirect(http.StatusTemporaryRedirect, loginURL)
 		}
 
 		return nil

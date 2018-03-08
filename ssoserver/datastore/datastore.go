@@ -9,6 +9,7 @@ import (
 
 type Datastore interface {
 	GetUser(id int) (*model.User, error)
+	GetUserByEmail(email string) (*model.User, error)
 	SaveUser(user *model.User) error
 }
 
@@ -31,6 +32,15 @@ func (i *inmemDatastore) GetUser(id int) (*model.User, error) {
 	}
 	return nil, errors.New("User not found")
 
+}
+
+func (i *inmemDatastore) GetUserByEmail(email string) (*model.User, error) {
+	for _, u := range i.datas {
+		if u.Email == email {
+			return u, nil
+		}
+	}
+	return nil, errors.New("User not found")
 }
 
 func (i *inmemDatastore) SaveUser(user *model.User) error {
