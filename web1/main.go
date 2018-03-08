@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"io"
 	"net/http"
@@ -67,14 +66,12 @@ func verifyToken(token string) (*model.User, error) {
 	}
 	defer resp.Body.Close()
 
-	user := new(model.User)
-	if err := json.NewDecoder(resp.Body).Decode(user); err != nil {
+	jsonObj := new(verifyResponse)
+	if err := json.NewDecoder(resp.Body).Decode(jsonObj); err != nil {
 		return nil, err
 	}
 
-	fmt.Println(user)
-
-	return user, nil
+	return jsonObj.User, nil
 }
 
 func authMiddleware(next echo.HandlerFunc) echo.HandlerFunc {

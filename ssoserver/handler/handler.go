@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo"
@@ -97,10 +96,6 @@ func (h *handler) VerifyToken(c echo.Context) error {
 		c.Logger().Debugf("Error when getting user: %v", err)
 		return renderVerifyTokenError(c, err)
 	}
-
-	fmt.Println("===========")
-	fmt.Println("return user: ", user)
-	fmt.Println("===========")
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"success": true,
