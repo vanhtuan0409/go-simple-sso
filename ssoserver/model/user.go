@@ -7,14 +7,12 @@ type User struct {
 	Email          string
 	HashedPassword string
 	Name           string
-	LoggedIn       bool
 }
 
 func NewUser(email, password, name string) *User {
 	u := &User{
-		Email:    email,
-		Name:     name,
-		LoggedIn: false,
+		Email: email,
+		Name:  name,
 	}
 	u.SetPassword(password)
 	return u
