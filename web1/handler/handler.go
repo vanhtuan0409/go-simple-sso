@@ -13,6 +13,13 @@ func NewHandler() *handler {
 	return &handler{}
 }
 
+type homeModel struct {
+	Name string
+}
+
 func (h *handler) Home(c echo.Context) error {
-	return c.String(http.StatusOK, "home")
+	data := homeModel{
+		Name: "Tuan Vuong",
+	}
+	return c.Render(http.StatusOK, "home.html", data)
 }
