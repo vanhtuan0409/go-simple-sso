@@ -8,7 +8,7 @@ WORKDIR $PKG_PATH/$SRV_NAME
 
 RUN apk update && apk upgrade && apk add --no-cache git curl
 RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-RUN dep init
+RUN dep ensure
 
 RUN go install
 EXPOSE 5000
