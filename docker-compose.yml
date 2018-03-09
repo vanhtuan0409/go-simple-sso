@@ -33,12 +33,15 @@ services:
       context: .
       dockerfile: web/Dockerfile
     environment:
-      - SSO_URL=http://login.com
+      - LOGIN_URL=http://login.com
+      - VERIFY_TOKEN_URL=http://ssoserver:5000
       - SERVER_URL=http://web1.com
       - APP_TITLE="Web 1"
     image: vanhtuan0409/ssoweb
     container_name: web1
     entrypoint: /go/bin/web
+    depends_on:
+      - ssoserver
     labels:
       - traefik.backend=web1
       - traefik.frontend.rule=Host:web1.com
@@ -49,12 +52,15 @@ services:
       context: .
       dockerfile: web/Dockerfile
     environment:
-      - SSO_URL=http://login.com
+      - LOGIN_URL=http://login.com
+      - VERIFY_TOKEN_URL=http://ssoserver:5000
       - SERVER_URL=http://web2.com
       - APP_TITLE="Web 2"
     image: vanhtuan0409/ssoweb
     container_name: web2
     entrypoint: /go/bin/web
+    depends_on:
+      - ssoserver
     labels:
       - traefik.backend=web2
       - traefik.frontend.rule=Host:web2.com

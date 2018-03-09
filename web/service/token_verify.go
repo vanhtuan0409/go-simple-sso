@@ -14,12 +14,12 @@ type TokenVerifyService interface {
 }
 
 type tokenVerifyService struct {
-	ssoURL string
+	verifyURL string
 }
 
 func NewTokenVerifyService(url string) TokenVerifyService {
 	return &tokenVerifyService{
-		ssoURL: url,
+		verifyURL: url,
 	}
 }
 
@@ -30,7 +30,7 @@ type verifyResponse struct {
 }
 
 func (s *tokenVerifyService) Verify(token string) (*model.User, error) {
-	verifyURL := s.ssoURL + "/verify_token"
+	verifyURL := s.verifyURL + "/verify_token"
 
 	// Sending request to SSO server for verification
 	data, err := json.Marshal(map[string]string{"token": token})

@@ -23,7 +23,7 @@ func (h *Handler) Home(c echo.Context) error {
 	viewData := homeViewModel{
 		User:       user,
 		Title:      h.AppEnv.Config.APP_TITLE,
-		LogoutLink: h.AppEnv.Config.SSO_URL + "/logout",
+		LogoutLink: h.AppEnv.Config.LOGIN_URL + "/logout",
 	}
 	return c.Render(http.StatusOK, "home.html", viewData)
 }
