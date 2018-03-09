@@ -10,13 +10,13 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
-	"github.com/vanhtuan0409/go-simple-sso/web1/handler"
-	"github.com/vanhtuan0409/go-simple-sso/web1/model"
+	"github.com/vanhtuan0409/go-simple-sso/web/handler"
+	"github.com/vanhtuan0409/go-simple-sso/web/model"
 )
 
 const (
 	SSO_ADDRESS    = "http://login.com:5000"
-	SERVER_ADDRESS = "http://web1.com:8081"
+	SERVER_ADDRESS = "http://web.com:8081"
 )
 
 type tpl struct {

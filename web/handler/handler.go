@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo"
-	"github.com/vanhtuan0409/go-simple-sso/web2/model"
+	"github.com/vanhtuan0409/go-simple-sso/web/model"
 )
 
 const (
