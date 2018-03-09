@@ -33,7 +33,7 @@ func main() {
 
 	// Dependencies
 	ds := datastore.NewDatastore()
-	ds.SaveUser(model.NewUser("member@pav.com", "abc123", "Member 1"))
+	ds.SaveUser(model.NewUser("member@example.com", "abc123", "Member"))
 
 	t := newTpl("template/*.html")
 
