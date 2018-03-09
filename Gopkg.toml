@@ -25,22 +25,22 @@
 #   unused-packages = true
 
 
-[prune]
-  go-tests = true
-  unused-packages = true
+[[constraint]]
+  name = "github.com/caarlos0/env"
+  version = "3.2.0"
 
 [[constraint]]
   name = "github.com/labstack/echo"
   version = "3.2.6"
 
 [[constraint]]
-  name = "github.com/dgrijalva/jwt-go"
-  version = "3.1.0"
-
-[[constraint]]
   name = "github.com/satori/go.uuid"
   version = "1.2.0"
 
 [[constraint]]
-  name = "github.com/caarlos0/env"
-  version = "3.2.0"
+  branch = "master"
+  name = "golang.org/x/crypto"
+
+[prune]
+  go-tests = true
+  unused-packages = true

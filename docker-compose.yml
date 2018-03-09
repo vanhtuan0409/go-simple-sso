@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  ssoserver:
+    build:
+      context: .
+      dockerfile: ssoserver/Dockerfile
+    environment:
+      - DEFAULT_CALLBACK=http://web1.com:6001
+      - HTTP_PORT=5000
+    image: vanhtuan0409/ssoserver
+    container_name: ssoserver
+    entrypoint: /go/bin/ssoserver
+    ports:
+      - 5000:5000
+
+  web1:
+    build:
+      context: .
+      dockerfile: web/Dockerfile
+    environment:
+      - SSO_URL=http://login.com:5000
+      - SERVER_URL=http://web1.com:6001
+      - HTTP_PORT=8080
+      - APP_TITLE="Web 1"
+    image: vanhtuan0409/ssoweb
+    container_name: web1
+    entrypoint: /go/bin/web
+    ports:
+      - 6001:8080
+
+  web2:
+    build:
+      context: .
+      dockerfile: web/Dockerfile
+    environment:
+      - SSO_URL=http://login.com:5000
+      - SERVER_URL=http://web2.com:6002
+      - HTTP_PORT=8080
+      - APP_TITLE="Web 2"
+    image: vanhtuan0409/ssoweb
+    container_name: web2
+    entrypoint: /go/bin/web
+    ports:
+      - 6002:8080

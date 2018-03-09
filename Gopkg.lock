@@ -10,8 +10,8 @@
 [[projects]]
   name = "github.com/dgrijalva/jwt-go"
   packages = ["."]
-  revision = "dbeaa9332f19a944acb5736b4456cfcc02140e29"
-  version = "v3.1.0"
+  revision = "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e"
+  version = "v3.2.0"
 
 [[projects]]
   name = "github.com/labstack/echo"
@@ -72,17 +72,17 @@
     "bcrypt",
     "blowfish"
   ]
-  revision = "85f98707c97e11569271e4d9b3d397e079c4f4d0"
+  revision = "c7dcf104e3a7a1417abc0230cb0d5240d764159d"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "dd2ff4accc098aceecb86b36eaa7829b2a17b1c9"
+  revision = "7dca6fe1f43775aa6d1334576870ff63f978f539"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "0534fd6db77a7e0bd0612ba04e12b410ece9c0cb0a2b9ff4cd6f0631e1f41a95"
+  inputs-digest = "6c0e000ed34a3f1519fdf1a2108d3ca1e1aac8ed2dd928a690e8f1b1222111c8"
   solver-name = "gps-cdcl"
   solver-version = 1
