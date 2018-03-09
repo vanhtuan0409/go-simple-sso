@@ -7,8 +7,8 @@ import (
 	"github.com/vanhtuan0409/go-simple-sso/web/config"
 )
 
-func RedirectToLogin(c echo.Context, cfg *config.Config) error {
-	callbackURL := cfg.SERVER_URL + "/callback"
-	loginURL := cfg.SSS_URL + "?callback=" + callbackURL
+func RedirectToLogin(c echo.Context, env *config.AppEnv) error {
+	callbackURL := env.Config.SERVER_URL + "/callback"
+	loginURL := env.Config.SSS_URL + "?callback=" + callbackURL
 	return c.Redirect(http.StatusFound, loginURL)
 }

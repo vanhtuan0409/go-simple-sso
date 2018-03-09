@@ -6,6 +6,7 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"github.com/vanhtuan0409/go-simple-sso/ssoserver/config"
 	"github.com/vanhtuan0409/go-simple-sso/ssoserver/datastore"
 	"github.com/vanhtuan0409/go-simple-sso/ssoserver/handler"
 	mdw "github.com/vanhtuan0409/go-simple-sso/ssoserver/middleware"
@@ -27,23 +28,31 @@ func (t *tpl) Render(w io.Writer, name string, data interface{}, c echo.Context)
 }
 
 func main() {
-	e := echo.New()
-	e.Use(middleware.Logger())
+	cfg := config.Parse()
 
-	// Init datastore and seed data
+	// Dependencies
 	ds := datastore.NewDatastore()
 	ds.SaveUser(model.NewUser("member1@pav.com", "abc123", "Member 1"))
 	ds.SaveUser(model.NewUser("member2@pav.com", "123abc", "Member 2"))
 
-	// Set golang template
 	t := newTpl("template/*.html")
-	e.Renderer = t
+
+	// App env
+	appEnv := new(config.AppEnv)
+	appEnv.Config = cfg
+	appEnv.Datastore = ds
 
 	// Create handler
-	h := handler.NewHandler(ds)
-	redirectMdw := mdw.RedirectMiddleware(ds)
+	h := new(handler.Handler)
+	h.AppEnv = appEnv
 
 	// Routing
+	e := echo.New()
+	e.Use(middleware.Logger())
+	e.Renderer = t
+
+	redirectMdw := mdw.RedirectCallbackMiddleware(appEnv)
+
 	e.GET("/", h.LoginView, redirectMdw)
 	e.POST("/", h.LoginProcess, redirectMdw)
 	e.GET("/logout", h.Logout)

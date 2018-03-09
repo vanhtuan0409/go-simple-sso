@@ -32,7 +32,6 @@ func main() {
 
 	// Dependencies
 	s := service.NewTokenVerifyService(cfg.SSS_URL)
-	authMiddleware := mdw.AuthMiddleware(cfg, s)
 	t := newTpl("template/*.html")
 
 	// App env
@@ -45,9 +44,10 @@ func main() {
 
 	// Routing
 	e := echo.New()
-	e.Use(middleware.Logger())
 	e.Renderer = t
+	authMiddleware := mdw.AuthMiddleware(appEnv)
 
+	e.Use(middleware.Logger())
 	e.GET("/", h.Home, authMiddleware)
 	e.GET("/callback", h.Callback)
 	e.Start(fmt.Sprintf(":%d", cfg.HTTP_PORT))
