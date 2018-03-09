@@ -20,6 +20,7 @@ func NewHandler(env *config.AppEnv) *handler {
 
 type homeViewModel struct {
 	User       *model.User
+	Title      string
 	LogoutLink string
 }
 
@@ -32,6 +33,7 @@ func (h *handler) Home(c echo.Context) error {
 
 	viewData := homeViewModel{
 		User:       user,
+		Title:      h.appEnv.Config.APP_TITLE,
 		LogoutLink: h.appEnv.Config.SSS_URL + "/logout",
 	}
 	return c.Render(http.StatusOK, "home.html", viewData)

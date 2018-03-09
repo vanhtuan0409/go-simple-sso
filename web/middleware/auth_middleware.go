@@ -10,11 +10,13 @@ import (
 func AuthMiddleware(cfg *config.Config, s service.TokenVerifyService) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
+			// Redirect if there is no cookie
 			cookie, err := c.Cookie("token")
 			if err != nil || cookie.Value == "" {
 				return handler.RedirectToLogin(c, cfg)
 			}
 
+			// Redirect if verification failed
 			user, err := s.Verify(cookie.Value)
 			if err != nil {
 				cookie.Value = ""

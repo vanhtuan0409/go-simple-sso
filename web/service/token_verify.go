@@ -32,13 +32,11 @@ type verifyResponse struct {
 func (s *tokenVerifyService) Verify(token string) (*model.User, error) {
 	verifyURL := s.ssoURL + "/verify_token"
 
-	data, err := json.Marshal(map[string]string{
-		"token": token,
-	})
+	// Sending request to SSO server for verification
+	data, err := json.Marshal(map[string]string{"token": token})
 	if err != nil {
 		return nil, err
 	}
-
 	req, err := http.NewRequest("POST", verifyURL, bytes.NewBuffer(data))
 	if err != nil {
 		return nil, err
@@ -52,6 +50,7 @@ func (s *tokenVerifyService) Verify(token string) (*model.User, error) {
 	}
 	defer resp.Body.Close()
 
+	// Decode and check response
 	jsonObj := new(verifyResponse)
 	if err := json.NewDecoder(resp.Body).Decode(jsonObj); err != nil {
 		return nil, err

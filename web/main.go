@@ -40,7 +40,7 @@ func main() {
 	appEnv.Config = cfg
 	appEnv.TokenVerifyService = s
 
-	// Create handler
+	// Handler
 	h := handler.NewHandler(appEnv)
 
 	// Routing
