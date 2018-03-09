@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"io"
 
@@ -56,5 +57,5 @@ func main() {
 	e.POST("/", h.LoginProcess, redirectMdw)
 	e.GET("/logout", h.Logout)
 	e.POST("/verify_token", h.VerifyToken)
-	e.Start(":5000")
+	e.Start(fmt.Sprintf(":%d", cfg.HTTP_PORT))
 }
