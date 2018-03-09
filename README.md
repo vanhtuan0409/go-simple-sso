@@ -13,7 +13,7 @@ Single sign-on (SSO) is a session and user authentication service that permits a
 
 Take Google as an example. You only need to login once but you can access to all of google services like Gmail, Calendar, Drive, ...
 
-![diagram](https://drive.google.com/file/d/1Fo2HtYKDA5tdZXKGBhtiZuNhq_kPkuAW/view)
+![diagram](https://image.ibb.co/fDMfk7/sso.jpg)
 
 ### Installation
 
