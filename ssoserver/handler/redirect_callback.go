@@ -7,10 +7,10 @@ import (
 	"github.com/vanhtuan0409/go-simple-sso/ssoserver/config"
 )
 
-func RedirectCallback(c echo.Context, cfg *config.Config, token string) error {
+func RedirectCallback(c echo.Context, env *config.AppEnv, token string) error {
 	callback := c.Request().URL.Query().Get("callback")
 	if callback == "" {
-		callback = cfg.DefaultCallback
+		callback = env.Config.DefaultCallback
 	}
 	tokenAddedCallback := callback + "?token=" + token
 	return c.Redirect(http.StatusFound, tokenAddedCallback)

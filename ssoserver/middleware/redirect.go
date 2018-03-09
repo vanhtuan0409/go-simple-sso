@@ -19,7 +19,7 @@ func RedirectCallbackMiddleware(env *config.AppEnv) echo.MiddlewareFunc {
 				return next(c)
 			}
 
-			return handler.RedirectCallback(c, env.Config, session.Token)
+			return handler.RedirectCallback(c, env, session.Token)
 		}
 	}
 }

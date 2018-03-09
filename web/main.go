@@ -40,7 +40,8 @@ func main() {
 	appEnv.TokenVerifyService = s
 
 	// Handler
-	h := handler.NewHandler(appEnv)
+	h := new(handler.Handler)
+	h.AppEnv = appEnv
 
 	// Routing
 	e := echo.New()
