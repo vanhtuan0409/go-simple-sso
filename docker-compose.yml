@@ -1,45 +1,64 @@
 version: '3'
 
 services:
+  traefik:
+    image: traefik
+    container_name: traefik
+    command: --configFile=/var/traefik/traefik.toml
+    ports:
+      - 80:80
+      - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik.toml:/var/traefik/traefik.toml
+    labels:
+      - traefik.enable=false
+
   ssoserver:
     build:
       context: .
       dockerfile: ssoserver/Dockerfile
     environment:
-      - DEFAULT_CALLBACK=http://web1.com:6001
+      - DEFAULT_CALLBACK=http://web1.com
       - HTTP_PORT=5000
     image: vanhtuan0409/ssoserver
     container_name: ssoserver
     entrypoint: /go/bin/ssoserver
-    ports:
-      - 5000:5000
+    labels:
+      - traefik.backend=ssoserver
+      - traefik.frontend.rule=Host:login.com
+      - traefik.port=5000
 
   web1:
     build:
       context: .
       dockerfile: web/Dockerfile
     environment:
-      - SSO_URL=http://login.com:5000
-      - SERVER_URL=http://web1.com:6001
+      - SSO_URL=http://login.com
+      - SERVER_URL=http://web1.com
       - HTTP_PORT=8080
       - APP_TITLE="Web 1"
     image: vanhtuan0409/ssoweb
     container_name: web1
     entrypoint: /go/bin/web
-    ports:
-      - 6001:8080
+    labels:
+      - traefik.backend=web1
+      - traefik.frontend.rule=Host:web1.com
+      - traefik.port=8080
 
   web2:
     build:
       context: .
       dockerfile: web/Dockerfile
     environment:
-      - SSO_URL=http://login.com:5000
-      - SERVER_URL=http://web2.com:6002
+      - SSO_URL=http://login.com
+      - SERVER_URL=http://web2.com
       - HTTP_PORT=8080
       - APP_TITLE="Web 2"
     image: vanhtuan0409/ssoweb
     container_name: web2
     entrypoint: /go/bin/web
-    ports:
-      - 6002:8080
+    labels:
+      - traefik.backend=web2
+      - traefik.frontend.rule=Host:web2.com
+      - traefik.port=8080
