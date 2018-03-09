@@ -11,3 +11,4 @@ RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 RUN dep init
 
 RUN go install
+EXPOSE 5000
