@@ -9,6 +9,6 @@ import (
 
 func RedirectToLogin(c echo.Context, env *config.AppEnv) error {
 	callbackURL := env.Config.SERVER_URL + "/callback"
-	loginURL := env.Config.SSS_URL + "?callback=" + callbackURL
+	loginURL := env.Config.SSO_URL + "?callback=" + callbackURL
 	return c.Redirect(http.StatusFound, loginURL)
 }

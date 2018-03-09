@@ -31,7 +31,7 @@ func main() {
 	cfg := config.Parse()
 
 	// Dependencies
-	s := service.NewTokenVerifyService(cfg.SSS_URL)
+	s := service.NewTokenVerifyService(cfg.SSO_URL)
 	t := newTpl("template/*.html")
 
 	// App env
